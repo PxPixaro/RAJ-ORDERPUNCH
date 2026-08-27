@@ -35,3 +35,10 @@ The HTML uses the official SheetJS browser library from:
 https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js
 Internet access is therefore required for Excel reading/export.
 If you open the HTML directly from your computer (file://), browser security may block automatic Excel fetch. In that case the Sync Data button opens a file picker and you can select the Excel manually.
+
+
+UPDATED UI NOTES
+- Sub Group filter removed.
+- Group filter appears first; Universal Search appears second.
+- Product quantity defaults to 1, supports +/- and direct manual typing.
+- Main groups are normalized dynamically (for example KBX variants => KBX; Luman variants => Luman).

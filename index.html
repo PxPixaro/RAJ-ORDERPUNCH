@@ -12,14 +12,14 @@ header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdro
 .header-inner{max-width:1500px;margin:auto;padding:14px 20px;display:flex;align-items:center;gap:16px;justify-content:space-between}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}
 .actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:white}.btn.secondary{background:white;color:var(--accent);border:1px solid #cbd5e1}.btn.ok{background:var(--ok)}.btn:disabled{opacity:.55;cursor:not-allowed}
 main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-.filters{padding:16px;display:grid;grid-template-columns:minmax(260px,2fr) 1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:800;color:#475569;margin:0 0 6px}.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font-size:14px;background:white;outline:none}.field input:focus,.field select:focus{border-color:#5b84c4;box-shadow:0 0 0 3px rgba(36,89,167,.1)}
+.filters{padding:16px;display:grid;grid-template-columns:minmax(220px,1fr) minmax(320px,2fr);gap:12px}.field label{display:block;font-size:12px;font-weight:800;color:#475569;margin:0 0 6px}.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font-size:14px;background:white;outline:none}.field input:focus,.field select:focus{border-color:#5b84c4;box-shadow:0 0 0 3px rgba(36,89,167,.1)}
 .status{padding:0 16px 14px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.status strong{color:var(--ink)}
-.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:900px}th{position:sticky;top:0;background:#f8fafc;text-align:left;font-size:12px;color:#475569;padding:11px;border-bottom:1px solid var(--line)}td{padding:11px;border-bottom:1px solid #eef2f7;font-size:13px;vertical-align:middle}.code{font-weight:800;color:#0f274b}.name{min-width:300px}.group{color:#475569}.price{text-align:right;white-space:nowrap}.qtybox{display:inline-flex;align-items:center;border:1px solid #cbd5e1;border-radius:9px;overflow:hidden;background:#fff}.qtybox button{width:34px;height:32px;border:0;background:#f1f5f9;font-size:18px;cursor:pointer}.qtybox span{min-width:34px;text-align:center;font-weight:800}.add{margin-left:7px;border:0;background:#e8eef8;color:var(--accent);font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer}.in-cart{background:#dcfce7;color:#166534}.loadmore{padding:14px;text-align:center}.empty{padding:48px;text-align:center;color:var(--muted)}
+.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:900px}th{position:sticky;top:0;background:#f8fafc;text-align:left;font-size:12px;color:#475569;padding:11px;border-bottom:1px solid var(--line)}td{padding:11px;border-bottom:1px solid #eef2f7;font-size:13px;vertical-align:middle}.code{font-weight:800;color:#0f274b}.name{min-width:300px}.group{color:#475569}.price{text-align:right;white-space:nowrap}.qtybox{display:inline-flex;align-items:center;border:1px solid #cbd5e1;border-radius:9px;overflow:hidden;background:#fff}.qtybox button{width:34px;height:32px;border:0;background:#f1f5f9;font-size:18px;cursor:pointer}.qtybox input{width:52px;height:32px;border:0;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;text-align:center;font-weight:800;font-size:13px;outline:none;background:#fff;-moz-appearance:textfield}.qtybox input::-webkit-outer-spin-button,.qtybox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.add{margin-left:7px;border:0;background:#e8eef8;color:var(--accent);font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer}.in-cart{background:#dcfce7;color:#166534}.loadmore{padding:14px;text-align:center}.empty{padding:48px;text-align:center;color:var(--muted)}
 .cart{position:sticky;top:86px;height:calc(100vh - 106px);display:flex;flex-direction:column}.cart-head{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.cart-head h2{font-size:17px;margin:0}.badge{background:var(--accent);color:white;border-radius:999px;min-width:28px;padding:4px 8px;text-align:center;font-size:12px;font-weight:800}.cart-items{padding:8px 12px;overflow:auto;flex:1}.cart-row{padding:11px 4px;border-bottom:1px solid #eef2f7}.cart-code{font-weight:800}.cart-name{font-size:12px;color:var(--muted);margin:3px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cart-controls{display:flex;align-items:center;justify-content:space-between}.remove{border:0;background:transparent;color:var(--danger);cursor:pointer;font-weight:700}.cart-foot{padding:14px;border-top:1px solid var(--line);display:grid;gap:9px}.cart-foot .btn{width:100%}.cart-empty{text-align:center;color:var(--muted);padding:40px 8px;font-size:13px}
 .toast{position:fixed;right:20px;bottom:20px;background:#111827;color:white;padding:12px 16px;border-radius:10px;box-shadow:var(--shadow);z-index:50;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
 .file-fallback{display:none}.sync-note{font-size:11px;color:var(--muted);line-height:1.35}
-@media(max-width:1050px){main{grid-template-columns:1fr}.cart{position:relative;top:auto;height:460px}.filters{grid-template-columns:1fr 1fr}.filters .field:first-child{grid-column:1/-1}}
-@media(max-width:650px){.header-inner{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.filters .field:first-child{grid-column:auto}main{padding:0 10px;margin-top:10px}.actions{width:100%}.actions .btn{flex:1}.brand h1{font-size:20px}}
+@media(max-width:1050px){main{grid-template-columns:1fr}.cart{position:relative;top:auto;height:460px}.filters{grid-template-columns:1fr 2fr}}
+@media(max-width:650px){.header-inner{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}main{padding:0 10px;margin-top:10px}.actions{width:100%}.actions .btn{flex:1}.brand h1{font-size:20px}}
 </style>
 </head>
 <body>
@@ -28,9 +28,8 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
 <section>
   <div class="panel">
     <div class="filters">
-      <div class="field"><label>Universal Search</label><input id="search" type="search" placeholder="Search code, product name, group, HSN, GST, MRP..." autocomplete="off" /></div>
       <div class="field"><label>Group</label><select id="group"><option value="">All Groups</option></select></div>
-      <div class="field"><label>Sub Group</label><select id="subgroup"><option value="">All Sub Groups</option></select></div>
+      <div class="field"><label>Universal Search</label><input id="search" type="search" placeholder="Search anything • Use @kbx KX525 to search inside a group" autocomplete="off" /></div>
     </div>
     <div class="status"><span id="resultStatus">Loading product master...</span><span id="syncStatus">Source: ALL PRODUCT MASTER.xlsx</span></div>
     <div class="table-wrap" id="tableWrap"></div>
@@ -50,36 +49,72 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
   const PAGE_SIZE = 200;
   let products = [], filtered = [], visibleCount = PAGE_SIZE;
   let cart = JSON.parse(localStorage.getItem('rajOrderPunchCart') || '{}');
+  const draftQty = {};
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const norm = s => String(s ?? '').trim();
 
-  function mainGroup(grp) {
-    let s = norm(grp).replace(/[–—]/g,'-');
-    if (!s) return 'Uncategorized';
-    const positions = [s.indexOf('-'), s.indexOf('/'), s.indexOf('(')].filter(x => x > 0);
-    if (!positions.length) return s;
-    return s.slice(0, Math.min(...positions)).trim() || s;
+  function normalizeGroupLabel(s) {
+    return norm(s).replace(/[–—]/g,'-').replace(/\s+/g,' ');
+  }
+
+  // Dynamic brand/group normalization. Variants such as "Appolo-Car", "Luman-C",
+  // "Luman Oil", "KBX-C", "KBX BB" are shown under one main group.
+  function buildGroupResolver(rawGroups) {
+    const originals = [...new Set(rawGroups.map(normalizeGroupLabel).filter(Boolean))];
+    const standalone = [...originals].sort((a,b)=>b.length-a.length);
+    return grp => {
+      const s = normalizeGroupLabel(grp);
+      if (!s) return 'Uncategorized';
+      if (/^kbx/i.test(s)) return 'KBX';
+
+      // First remove explicit subgroup suffixes (-, /, (, _), while preserving spaces in brand names.
+      const cut = s.search(/[-/( _](?=[^ ]|$)/);
+      let base = cut > 0 && /[-/(_]/.test(s[cut]) ? s.slice(0, cut).trim() : s;
+
+      // If an exact standalone group is a prefix before a space, use that longest brand name.
+      // Example: "Luman Oil" -> "Luman", "Rj Phc Valeo" -> "Rj Phc".
+      const prefix = standalone.find(x => x.length < s.length && s.toLowerCase().startsWith(x.toLowerCase() + ' '));
+      if (prefix) base = prefix;
+
+      // Common compact suffix patterns without a separator.
+      if (/^kbx/i.test(base)) return 'KBX';
+      return base || s;
+    };
   }
 
   function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
   function saveCart(){ localStorage.setItem('rajOrderPunchCart', JSON.stringify(cart)); renderCart(); }
-  function qty(code){ return Number(cart[code]?.qty || 0); }
-  function setQty(code, q){
-    q = Math.max(0, Math.floor(Number(q)||0));
+  function cartQty(code){ return Number(cart[code]?.qty || 0); }
+  function rowQty(code){ return Math.max(1, Math.floor(Number(draftQty[code] ?? cart[code]?.qty ?? 1) || 1)); }
+  function setDraftQty(code, q){
+    q = Math.max(1, Math.floor(Number(q)||1));
+    draftQty[code] = q;
+    const el = document.querySelector(`[data-qty="${CSS.escape(code)}"]`); if(el) el.value=q;
+  }
+  function setCartQty(code, q){
+    q = Math.max(1, Math.floor(Number(q)||1));
     const p = products.find(x => x.Code === code) || cart[code];
     if (!p) return;
-    if (q === 0) delete cart[code]; else cart[code] = {Code:p.Code, Name:p.Name || '', qty:q};
+    cart[code] = {Code:p.Code, Name:p.Name || '', qty:q};
+    draftQty[code] = q;
     saveCart();
-    const el = document.querySelector(`[data-qty="${CSS.escape(code)}"]`); if(el) el.textContent=q;
-    const add = document.querySelector(`[data-add="${CSS.escape(code)}"]`); if(add) add.classList.toggle('in-cart',q>0);
+    const el = document.querySelector(`[data-qty="${CSS.escape(code)}"]`); if(el) el.value=q;
+    const add = document.querySelector(`[data-add="${CSS.escape(code)}"]`); if(add) add.classList.add('in-cart');
+  }
+  function removeFromCart(code){
+    delete cart[code];
+    draftQty[code] = 1;
+    saveCart();
+    const el = document.querySelector(`[data-qty="${CSS.escape(code)}"]`); if(el) el.value=1;
+    const add = document.querySelector(`[data-add="${CSS.escape(code)}"]`); if(add) add.classList.remove('in-cart');
   }
 
   function renderCart(){
     const entries = Object.values(cart).filter(x=>x.qty>0).sort((a,b)=>String(a.Code).localeCompare(String(b.Code)));
     $('cartCount').textContent = entries.length;
-    if(!entries.length){ $('cartItems').innerHTML='<div class="cart-empty">Cart is empty.<br>Add products using + or Add to Cart.</div>'; return; }
-    $('cartItems').innerHTML = entries.map(x=>`<div class="cart-row"><div class="cart-code">${esc(x.Code)}</div><div class="cart-name">${esc(x.Name)}</div><div class="cart-controls"><div class="qtybox"><button data-cart-minus="${esc(x.Code)}">−</button><span>${x.qty}</span><button data-cart-plus="${esc(x.Code)}">+</button></div><button class="remove" data-remove="${esc(x.Code)}">Remove</button></div></div>`).join('');
+    if(!entries.length){ $('cartItems').innerHTML='<div class="cart-empty">Cart is empty.<br>Set quantity and click Add to Cart.</div>'; return; }
+    $('cartItems').innerHTML = entries.map(x=>`<div class="cart-row"><div class="cart-code">${esc(x.Code)}</div><div class="cart-name">${esc(x.Name)}</div><div class="cart-controls"><div class="qtybox"><button data-cart-minus="${esc(x.Code)}">−</button><input type="number" min="1" step="1" value="${x.qty}" data-cart-qty="${esc(x.Code)}" inputmode="numeric" /><button data-cart-plus="${esc(x.Code)}">+</button></div><button class="remove" data-remove="${esc(x.Code)}">Remove</button></div></div>`).join('');
   }
 
   function rebuildFilters(){
@@ -87,22 +122,41 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
     const current=$('group').value;
     $('group').innerHTML='<option value="">All Groups</option>'+groups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');
     if(groups.includes(current)) $('group').value=current;
-    rebuildSubgroups();
   }
-  function rebuildSubgroups(){
-    const g=$('group').value;
-    const subs=[...new Set(products.filter(p=>!g||p.MainGroup===g).map(p=>p.GrpName).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
-    const current=$('subgroup').value;
-    $('subgroup').innerHTML='<option value="">All Sub Groups</option>'+subs.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
-    if(subs.includes(current)) $('subgroup').value=current;
+
+  function groupKey(s){
+    return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+  }
+
+  // Universal Search supports an optional @group command.
+  // Examples: @kbx, @kbx KX525, @luman headlamp
+  function parseUniversalSearch(value){
+    const raw=String(value||'').trim();
+    let taggedGroup='';
+    let text=raw;
+    if(raw.startsWith('@')){
+      const m=raw.match(/^@([^\s]+)(?:\s+(.*))?$/);
+      if(m){
+        const tag=groupKey(m[1]);
+        const groups=[...new Set(products.map(p=>p.MainGroup))];
+        const exact=groups.find(x=>groupKey(x)===tag);
+        const starts=groups.filter(x=>groupKey(x).startsWith(tag));
+        if(exact) taggedGroup=exact;
+        else if(starts.length===1) taggedGroup=starts[0];
+        text=(m[2]||'').trim();
+      }
+    }
+    const terms=text.toLowerCase().split(/\s+/).filter(Boolean);
+    return {taggedGroup,terms};
   }
 
   function applyFilters(){
-    const q=$('search').value.trim().toLowerCase(); const g=$('group').value; const sg=$('subgroup').value;
+    const g=$('group').value;
+    const {taggedGroup,terms}=parseUniversalSearch($('search').value);
     filtered=products.filter(p=>{
       if(g && p.MainGroup!==g) return false;
-      if(sg && p.GrpName!==sg) return false;
-      if(q && !p._search.includes(q)) return false;
+      if(taggedGroup && p.MainGroup!==taggedGroup) return false;
+      if(terms.length && !terms.every(t=>p._search.includes(t))) return false;
       return true;
     });
     visibleCount=PAGE_SIZE; renderProducts();
@@ -113,7 +167,7 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
     $('resultStatus').innerHTML=`Showing <strong>${Math.min(visibleCount,filtered.length).toLocaleString()}</strong> of <strong>${filtered.length.toLocaleString()}</strong> matching products · Master: <strong>${products.length.toLocaleString()}</strong>`;
     if(!rows.length){$('tableWrap').innerHTML='<div class="empty">No matching products found.</div>'; $('loadMoreWrap').style.display='none'; return;}
     $('tableWrap').innerHTML=`<table><thead><tr><th>CODE</th><th>PRODUCT NAME</th><th>GROUP</th><th>UNIT</th><th>MRP</th><th>QTY / CART</th></tr></thead><tbody>${rows.map(p=>{
-      const q=qty(p.Code); return `<tr><td class="code">${esc(p.Code)}</td><td class="name">${esc(p.Name)}</td><td class="group">${esc(p.GrpName)}</td><td>${esc(p.Unit)}</td><td class="price">${esc(p.MRP)}</td><td><div class="qtybox"><button data-minus="${esc(p.Code)}">−</button><span data-qty="${esc(p.Code)}">${q}</span><button data-plus="${esc(p.Code)}">+</button></div><button class="add ${q>0?'in-cart':''}" data-add="${esc(p.Code)}">Add to Cart</button></td></tr>`;
+      const q=rowQty(p.Code), inCart=cartQty(p.Code)>0; return `<tr><td class="code">${esc(p.Code)}</td><td class="name">${esc(p.Name)}</td><td class="group">${esc(p.MainGroup)}</td><td>${esc(p.Unit)}</td><td class="price">${esc(p.MRP)}</td><td><div class="qtybox"><button data-minus="${esc(p.Code)}">−</button><input type="number" min="1" step="1" value="${q}" data-qty="${esc(p.Code)}" inputmode="numeric" /><button data-plus="${esc(p.Code)}">+</button></div><button class="add ${inCart?'in-cart':''}" data-add="${esc(p.Code)}">${inCart?'Update Cart':'Add to Cart'}</button></td></tr>`;
     }).join('')}</tbody></table>`;
     $('loadMoreWrap').style.display=visibleCount<filtered.length?'block':'none';
   }
@@ -122,9 +176,10 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
     if(typeof XLSX==='undefined') throw new Error('Excel library could not load. Check internet connection and refresh.');
     const wb=XLSX.read(arrayBuffer,{type:'array',dense:true}); const ws=wb.Sheets[wb.SheetNames[0]];
     const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+    const resolveGroup=buildGroupResolver(raw.map(r=>r.GrpName));
     products=raw.map((r,i)=>{
       const p={Document:norm(r.Document),GrpName:norm(r.GrpName),Code:norm(r.Code),Name:norm(r.Name),Unit:norm(r.Unit),HSNCode:norm(r.HSNCode),GST:norm(r.GST),MRP:norm(r.MRP),HO_Rate:norm(r.HO_Rate)};
-      p.MainGroup=mainGroup(p.GrpName); p._search=Object.values(p).join(' ').toLowerCase(); p._row=i+2; return p;
+      p.MainGroup=resolveGroup(p.GrpName); p._search=[...Object.values(p),p.MainGroup].join(' ').toLowerCase(); p._row=i+2; return p;
     }).filter(p=>p.Code);
     rebuildFilters(); filtered=products.slice(); visibleCount=PAGE_SIZE; renderProducts(); renderCart();
   }
@@ -155,21 +210,34 @@ main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template
 
   let timer;
   $('search').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(applyFilters,120)});
-  $('group').addEventListener('change',()=>{ $('subgroup').value=''; rebuildSubgroups(); applyFilters(); });
-  $('subgroup').addEventListener('change',applyFilters);
+  $('group').addEventListener('change',applyFilters);
   $('syncBtn').addEventListener('click',syncData);
   $('loadMoreBtn').addEventListener('click',()=>{visibleCount+=PAGE_SIZE;renderProducts()});
   $('downloadBtn').addEventListener('click',exportCart); $('downloadBtn2').addEventListener('click',exportCart);
-  $('clearCartBtn').addEventListener('click',()=>{if(confirm('Clear all cart quantities?')){cart={};saveCart();renderProducts();}});
+  $('clearCartBtn').addEventListener('click',()=>{if(confirm('Clear all cart quantities?')){cart={};Object.keys(draftQty).forEach(k=>delete draftQty[k]);saveCart();renderProducts();}});
   $('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{parseWorkbook(await f.arrayBuffer());$('syncStatus').textContent='Local file loaded: '+f.name;toast('Excel loaded');}catch(err){toast(err.message)}});
+
+  document.addEventListener('input',e=>{
+    if(e.target.matches('[data-qty]')){
+      const code=e.target.dataset.qty;
+      if(e.target.value !== '') draftQty[code]=Math.max(1,Math.floor(Number(e.target.value)||1));
+    } else if(e.target.matches('[data-cart-qty]')){
+      const code=e.target.dataset.cartQty;
+      if(e.target.value !== '') setCartQty(code,e.target.value);
+    }
+  });
+  document.addEventListener('change',e=>{
+    if(e.target.matches('[data-qty]')) setDraftQty(e.target.dataset.qty,e.target.value);
+    else if(e.target.matches('[data-cart-qty]')) setCartQty(e.target.dataset.cartQty,e.target.value);
+  });
   document.addEventListener('click',e=>{
     const b=e.target.closest('button'); if(!b)return;
-    if(b.dataset.plus!==undefined) setQty(b.dataset.plus,qty(b.dataset.plus)+1);
-    else if(b.dataset.minus!==undefined) setQty(b.dataset.minus,qty(b.dataset.minus)-1);
-    else if(b.dataset.add!==undefined) setQty(b.dataset.add,qty(b.dataset.add)+1);
-    else if(b.dataset.cartPlus!==undefined) setQty(b.dataset.cartPlus,qty(b.dataset.cartPlus)+1);
-    else if(b.dataset.cartMinus!==undefined) setQty(b.dataset.cartMinus,qty(b.dataset.cartMinus)-1);
-    else if(b.dataset.remove!==undefined) setQty(b.dataset.remove,0);
+    if(b.dataset.plus!==undefined) setDraftQty(b.dataset.plus,rowQty(b.dataset.plus)+1);
+    else if(b.dataset.minus!==undefined) setDraftQty(b.dataset.minus,rowQty(b.dataset.minus)-1);
+    else if(b.dataset.add!==undefined){ setCartQty(b.dataset.add,rowQty(b.dataset.add)); toast('Added to cart'); renderProducts(); }
+    else if(b.dataset.cartPlus!==undefined) setCartQty(b.dataset.cartPlus,cartQty(b.dataset.cartPlus)+1);
+    else if(b.dataset.cartMinus!==undefined) setCartQty(b.dataset.cartMinus,Math.max(1,cartQty(b.dataset.cartMinus)-1));
+    else if(b.dataset.remove!==undefined){ removeFromCart(b.dataset.remove); renderProducts(); }
   });
 
   renderCart(); syncData();
