@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Raj Order Punch</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e7eb;--accent:#173b72;--accent2:#2459a7;--ok:#0f766e;--danger:#b42318;--shadow:0 8px 28px rgba(23,32,51,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.header-inner{max-width:1500px;margin:auto;padding:14px 20px;display:flex;align-items:center;gap:16px;justify-content:space-between}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:white}.btn.secondary{background:white;color:var(--accent);border:1px solid #cbd5e1}.btn.ok{background:var(--ok)}.btn:disabled{opacity:.55;cursor:not-allowed}
+main{max-width:1500px;margin:20px auto;padding:0 20px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.filters{padding:16px;display:grid;grid-template-columns:minmax(260px,2fr) 1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:800;color:#475569;margin:0 0 6px}.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font-size:14px;background:white;outline:none}.field input:focus,.field select:focus{border-color:#5b84c4;box-shadow:0 0 0 3px rgba(36,89,167,.1)}
+.status{padding:0 16px 14px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.status strong{color:var(--ink)}
+.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:900px}th{position:sticky;top:0;background:#f8fafc;text-align:left;font-size:12px;color:#475569;padding:11px;border-bottom:1px solid var(--line)}td{padding:11px;border-bottom:1px solid #eef2f7;font-size:13px;vertical-align:middle}.code{font-weight:800;color:#0f274b}.name{min-width:300px}.group{color:#475569}.price{text-align:right;white-space:nowrap}.qtybox{display:inline-flex;align-items:center;border:1px solid #cbd5e1;border-radius:9px;overflow:hidden;background:#fff}.qtybox button{width:34px;height:32px;border:0;background:#f1f5f9;font-size:18px;cursor:pointer}.qtybox span{min-width:34px;text-align:center;font-weight:800}.add{margin-left:7px;border:0;background:#e8eef8;color:var(--accent);font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer}.in-cart{background:#dcfce7;color:#166534}.loadmore{padding:14px;text-align:center}.empty{padding:48px;text-align:center;color:var(--muted)}
+.cart{position:sticky;top:86px;height:calc(100vh - 106px);display:flex;flex-direction:column}.cart-head{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.cart-head h2{font-size:17px;margin:0}.badge{background:var(--accent);color:white;border-radius:999px;min-width:28px;padding:4px 8px;text-align:center;font-size:12px;font-weight:800}.cart-items{padding:8px 12px;overflow:auto;flex:1}.cart-row{padding:11px 4px;border-bottom:1px solid #eef2f7}.cart-code{font-weight:800}.cart-name{font-size:12px;color:var(--muted);margin:3px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cart-controls{display:flex;align-items:center;justify-content:space-between}.remove{border:0;background:transparent;color:var(--danger);cursor:pointer;font-weight:700}.cart-foot{padding:14px;border-top:1px solid var(--line);display:grid;gap:9px}.cart-foot .btn{width:100%}.cart-empty{text-align:center;color:var(--muted);padding:40px 8px;font-size:13px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:white;padding:12px 16px;border-radius:10px;box-shadow:var(--shadow);z-index:50;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+.file-fallback{display:none}.sync-note{font-size:11px;color:var(--muted);line-height:1.35}
+@media(max-width:1050px){main{grid-template-columns:1fr}.cart{position:relative;top:auto;height:460px}.filters{grid-template-columns:1fr 1fr}.filters .field:first-child{grid-column:1/-1}}
+@media(max-width:650px){.header-inner{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.filters .field:first-child{grid-column:auto}main{padding:0 10px;margin-top:10px}.actions{width:100%}.actions .btn{flex:1}.brand h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div class="brand"><h1>Raj Order Punch</h1><small>Product ordering from master Excel</small></div><div class="actions"><button class="btn secondary" id="syncBtn">↻ Sync Data</button><button class="btn ok" id="downloadBtn">Download Excel</button><input class="file-fallback" type="file" id="fileInput" accept=".xlsx,.xls" /></div></div></header>
+<main>
+<section>
+  <div class="panel">
+    <div class="filters">
+      <div class="field"><label>Universal Search</label><input id="search" type="search" placeholder="Search code, product name, group, HSN, GST, MRP..." autocomplete="off" /></div>
+      <div class="field"><label>Group</label><select id="group"><option value="">All Groups</option></select></div>
+      <div class="field"><label>Sub Group</label><select id="subgroup"><option value="">All Sub Groups</option></select></div>
+    </div>
+    <div class="status"><span id="resultStatus">Loading product master...</span><span id="syncStatus">Source: ALL PRODUCT MASTER.xlsx</span></div>
+    <div class="table-wrap" id="tableWrap"></div>
+    <div class="loadmore" id="loadMoreWrap" style="display:none"><button class="btn secondary" id="loadMoreBtn">Load More</button></div>
+  </div>
+</section>
+<aside class="panel cart">
+  <div class="cart-head"><h2>Cart</h2><span class="badge" id="cartCount">0</span></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot"><div class="sync-note">Export contains only two columns: <b>CODE</b> and <b>QTY</b>.</div><button class="btn ok" id="downloadBtn2">Download Excel</button><button class="btn secondary" id="clearCartBtn">Clear Cart</button></div>
+</aside>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+  const EXCEL_FILE = 'ALL PRODUCT MASTER.xlsx';
+  const PAGE_SIZE = 200;
+  let products = [], filtered = [], visibleCount = PAGE_SIZE;
+  let cart = JSON.parse(localStorage.getItem('rajOrderPunchCart') || '{}');
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const norm = s => String(s ?? '').trim();
+
+  function mainGroup(grp) {
+    let s = norm(grp).replace(/[–—]/g,'-');
+    if (!s) return 'Uncategorized';
+    const positions = [s.indexOf('-'), s.indexOf('/'), s.indexOf('(')].filter(x => x > 0);
+    if (!positions.length) return s;
+    return s.slice(0, Math.min(...positions)).trim() || s;
+  }
+
+  function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+  function saveCart(){ localStorage.setItem('rajOrderPunchCart', JSON.stringify(cart)); renderCart(); }
+  function qty(code){ return Number(cart[code]?.qty || 0); }
+  function setQty(code, q){
+    q = Math.max(0, Math.floor(Number(q)||0));
+    const p = products.find(x => x.Code === code) || cart[code];
+    if (!p) return;
+    if (q === 0) delete cart[code]; else cart[code] = {Code:p.Code, Name:p.Name || '', qty:q};
+    saveCart();
+    const el = document.querySelector(`[data-qty="${CSS.escape(code)}"]`); if(el) el.textContent=q;
+    const add = document.querySelector(`[data-add="${CSS.escape(code)}"]`); if(add) add.classList.toggle('in-cart',q>0);
+  }
+
+  function renderCart(){
+    const entries = Object.values(cart).filter(x=>x.qty>0).sort((a,b)=>String(a.Code).localeCompare(String(b.Code)));
+    $('cartCount').textContent = entries.length;
+    if(!entries.length){ $('cartItems').innerHTML='<div class="cart-empty">Cart is empty.<br>Add products using + or Add to Cart.</div>'; return; }
+    $('cartItems').innerHTML = entries.map(x=>`<div class="cart-row"><div class="cart-code">${esc(x.Code)}</div><div class="cart-name">${esc(x.Name)}</div><div class="cart-controls"><div class="qtybox"><button data-cart-minus="${esc(x.Code)}">−</button><span>${x.qty}</span><button data-cart-plus="${esc(x.Code)}">+</button></div><button class="remove" data-remove="${esc(x.Code)}">Remove</button></div></div>`).join('');
+  }
+
+  function rebuildFilters(){
+    const groups=[...new Set(products.map(p=>p.MainGroup))].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
+    const current=$('group').value;
+    $('group').innerHTML='<option value="">All Groups</option>'+groups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');
+    if(groups.includes(current)) $('group').value=current;
+    rebuildSubgroups();
+  }
+  function rebuildSubgroups(){
+    const g=$('group').value;
+    const subs=[...new Set(products.filter(p=>!g||p.MainGroup===g).map(p=>p.GrpName).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
+    const current=$('subgroup').value;
+    $('subgroup').innerHTML='<option value="">All Sub Groups</option>'+subs.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+    if(subs.includes(current)) $('subgroup').value=current;
+  }
+
+  function applyFilters(){
+    const q=$('search').value.trim().toLowerCase(); const g=$('group').value; const sg=$('subgroup').value;
+    filtered=products.filter(p=>{
+      if(g && p.MainGroup!==g) return false;
+      if(sg && p.GrpName!==sg) return false;
+      if(q && !p._search.includes(q)) return false;
+      return true;
+    });
+    visibleCount=PAGE_SIZE; renderProducts();
+  }
+
+  function renderProducts(){
+    const rows=filtered.slice(0,visibleCount);
+    $('resultStatus').innerHTML=`Showing <strong>${Math.min(visibleCount,filtered.length).toLocaleString()}</strong> of <strong>${filtered.length.toLocaleString()}</strong> matching products · Master: <strong>${products.length.toLocaleString()}</strong>`;
+    if(!rows.length){$('tableWrap').innerHTML='<div class="empty">No matching products found.</div>'; $('loadMoreWrap').style.display='none'; return;}
+    $('tableWrap').innerHTML=`<table><thead><tr><th>CODE</th><th>PRODUCT NAME</th><th>GROUP</th><th>UNIT</th><th>MRP</th><th>QTY / CART</th></tr></thead><tbody>${rows.map(p=>{
+      const q=qty(p.Code); return `<tr><td class="code">${esc(p.Code)}</td><td class="name">${esc(p.Name)}</td><td class="group">${esc(p.GrpName)}</td><td>${esc(p.Unit)}</td><td class="price">${esc(p.MRP)}</td><td><div class="qtybox"><button data-minus="${esc(p.Code)}">−</button><span data-qty="${esc(p.Code)}">${q}</span><button data-plus="${esc(p.Code)}">+</button></div><button class="add ${q>0?'in-cart':''}" data-add="${esc(p.Code)}">Add to Cart</button></td></tr>`;
+    }).join('')}</tbody></table>`;
+    $('loadMoreWrap').style.display=visibleCount<filtered.length?'block':'none';
+  }
+
+  function parseWorkbook(arrayBuffer){
+    if(typeof XLSX==='undefined') throw new Error('Excel library could not load. Check internet connection and refresh.');
+    const wb=XLSX.read(arrayBuffer,{type:'array',dense:true}); const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+    products=raw.map((r,i)=>{
+      const p={Document:norm(r.Document),GrpName:norm(r.GrpName),Code:norm(r.Code),Name:norm(r.Name),Unit:norm(r.Unit),HSNCode:norm(r.HSNCode),GST:norm(r.GST),MRP:norm(r.MRP),HO_Rate:norm(r.HO_Rate)};
+      p.MainGroup=mainGroup(p.GrpName); p._search=Object.values(p).join(' ').toLowerCase(); p._row=i+2; return p;
+    }).filter(p=>p.Code);
+    rebuildFilters(); filtered=products.slice(); visibleCount=PAGE_SIZE; renderProducts(); renderCart();
+  }
+
+  async function syncData(){
+    $('syncBtn').disabled=true; $('syncStatus').textContent='Synchronizing...';
+    try{
+      const res=await fetch(EXCEL_FILE+'?sync='+Date.now(),{cache:'no-store'});
+      if(!res.ok) throw new Error('Excel file not found');
+      parseWorkbook(await res.arrayBuffer());
+      $('syncStatus').textContent='Synced: '+new Date().toLocaleString(); toast('Data synchronized');
+    }catch(err){
+      $('syncStatus').textContent='Auto sync unavailable in local file mode';
+      if(location.protocol==='file:'){ toast('Choose the Excel file to load locally'); $('fileInput').click(); }
+      else { toast('Sync failed: '+err.message); console.error(err); }
+    }finally{$('syncBtn').disabled=false;}
+  }
+
+  function exportCart(){
+    if(typeof XLSX==='undefined'){toast('Excel export library not loaded');return;}
+    const entries=Object.values(cart).filter(x=>x.qty>0);
+    if(!entries.length){toast('Cart is empty');return;}
+    const data=[['CODE','QTY'],...entries.map(x=>[x.Code,Number(x.qty)])];
+    const ws=XLSX.utils.aoa_to_sheet(data); ws['!cols']=[{wch:22},{wch:10}];
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Order');
+    XLSX.writeFile(wb,'Raj_Order_Punch.xlsx');
+  }
+
+  let timer;
+  $('search').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(applyFilters,120)});
+  $('group').addEventListener('change',()=>{ $('subgroup').value=''; rebuildSubgroups(); applyFilters(); });
+  $('subgroup').addEventListener('change',applyFilters);
+  $('syncBtn').addEventListener('click',syncData);
+  $('loadMoreBtn').addEventListener('click',()=>{visibleCount+=PAGE_SIZE;renderProducts()});
+  $('downloadBtn').addEventListener('click',exportCart); $('downloadBtn2').addEventListener('click',exportCart);
+  $('clearCartBtn').addEventListener('click',()=>{if(confirm('Clear all cart quantities?')){cart={};saveCart();renderProducts();}});
+  $('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{parseWorkbook(await f.arrayBuffer());$('syncStatus').textContent='Local file loaded: '+f.name;toast('Excel loaded');}catch(err){toast(err.message)}});
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    if(b.dataset.plus!==undefined) setQty(b.dataset.plus,qty(b.dataset.plus)+1);
+    else if(b.dataset.minus!==undefined) setQty(b.dataset.minus,qty(b.dataset.minus)-1);
+    else if(b.dataset.add!==undefined) setQty(b.dataset.add,qty(b.dataset.add)+1);
+    else if(b.dataset.cartPlus!==undefined) setQty(b.dataset.cartPlus,qty(b.dataset.cartPlus)+1);
+    else if(b.dataset.cartMinus!==undefined) setQty(b.dataset.cartMinus,qty(b.dataset.cartMinus)-1);
+    else if(b.dataset.remove!==undefined) setQty(b.dataset.remove,0);
+  });
+
+  renderCart(); syncData();
+})();
+</script>
+</body>
+</html>
