@@ -1,44 +1,76 @@
-RAJ ORDER PUNCH - GITHUB READY
-================================
+RAJ ORDER PUNCH — SUPABASE PROJECT
+=================================
 
-Files to upload in the SAME GitHub repository/folder:
-1. Raj_Order_Punch.html  (you may rename this to index.html for GitHub Pages)
-2. ALL PRODUCT MASTER.xlsx
+FILES
+-----
+index.html                  Main order-punch website
+admin.html                  Excel -> Supabase Product/Stock/Party sync page
+config.js                   Supabase URL + Publishable Key
+ALL PRODUCT MASTER.xlsx     Updated workbook (Product Master + Party Master)
+SECURITY_UPGRADE.sql        Optional hardening notes for admin sync
 
-How it works
+ONE REQUIRED STEP
+-----------------
+Open config.js and replace:
+PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE
+with your Supabase Publishable key beginning with:
+sb_publishable_
+
+Never put sb_secret_, service_role, or database password in this project.
+
+FIRST-TIME DATA SYNC
+--------------------
+1. Put all files in the same GitHub repository/folder.
+2. Open admin.html from your deployed site.
+3. Choose ALL PRODUCT MASTER.xlsx.
+4. Click "Sync Excel -> Supabase".
+5. Wait until Products and Parties both show DONE.
+6. Open index.html and click Refresh Data.
+
+NORMAL DAILY USE
+----------------
+- Select Party Master party.
+- Use Group or Universal Search.
+- @group works: @kbx KX525, @luman lamp, @kbx.
+- QTY defaults to 1 and can be typed manually.
+- Cart keeps exact add order, not alphabetical order.
+- New cart item auto-scrolls into view.
+- Stock shown is Supabase live stock when available.
+- Stock 0 or negative is shown RED.
+- Negative stock ordering is allowed.
+- Punch Order & Download Excel calls punch_order() first.
+- Only after successful backend punch does it download CODE + QTY Excel.
+- Order history can be filtered by Party + Date.
+
+UPDATING MASTER / STOCK LATER
+-----------------------------
+1. Update Product Master / Stock / Party Master in Excel.
+2. Replace ALL PRODUCT MASTER.xlsx in GitHub with the updated file.
+3. Open admin.html and run Sync again.
+4. Product codes are upserted. New products are added.
+5. Excel Stock overwrites current Supabase stock at master-sync time.
+6. After that, each punched order deducts from Supabase live stock.
+
+IMPORTANT STOCK RULE
+--------------------
+Do NOT run master stock sync casually during live ordering unless the Excel Stock
+is intentionally the new physical stock baseline. A stock sync overwrites live stock.
+
+SECURITY
+--------
+Your current SQL setup grants sync_products and sync_parties to anon. That is okay
+for a private/prototype rollout, but anyone who knows the RPC can technically call it.
+Do not publicly expose admin.html long-term without Supabase Auth / admin restriction.
+SECURITY_UPGRADE.sql contains the starting hardening steps.
+
+GITHUB PAGES
 ------------
-- The webpage reads ALL PRODUCT MASTER.xlsx directly from the same folder.
-- Universal Search searches the complete product data.
-- Group is dynamically derived from GrpName.
-  Examples: Appolo-Car -> Group Appolo, Ask-Cv -> Group Ask, Kbx-H -> Group Kbx.
-- Sub Group keeps the original GrpName values from Excel.
-- Cart quantities are saved in the browser using localStorage.
-- Download Excel exports ONLY CODE and QTY.
-- Sync Data re-downloads the Excel with cache-busting, so a replaced Excel can be reloaded without changing HTML.
+Keep index.html, admin.html, config.js, and ALL PRODUCT MASTER.xlsx in the same folder.
+For GitHub Pages, index.html opens as the website root automatically.
 
-Updating product data
----------------------
-1. Keep the Excel filename EXACTLY: ALL PRODUCT MASTER.xlsx
-2. Add/modify rows in the Excel.
-3. Replace/upload the Excel in the same GitHub folder.
-4. Open/refresh the deployed page and click Sync Data.
-5. New Groups/Sub Groups are built automatically from the latest GrpName values.
-
-GitHub Pages
-------------
-Recommended: rename Raj_Order_Punch.html to index.html before upload.
-Then enable GitHub Pages for the branch/folder containing both files.
-
-Important
----------
-The HTML uses the official SheetJS browser library from:
-https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js
-Internet access is therefore required for Excel reading/export.
-If you open the HTML directly from your computer (file://), browser security may block automatic Excel fetch. In that case the Sync Data button opens a file picker and you can select the Excel manually.
-
-
-UPDATED UI NOTES
-- Sub Group filter removed.
-- Group filter appears first; Universal Search appears second.
-- Product quantity defaults to 1, supports +/- and direct manual typing.
-- Main groups are normalized dynamically (for example KBX variants => KBX; Luman variants => Luman).
+FAST PARTY SEARCH UPDATE
+------------------------
+The main page no longer downloads all Party Master names at startup.
+Party search is server-side: type at least 2 letters and only matching parties are fetched from Supabase.
+For best search speed, run PERFORMANCE_UPGRADE.sql once in Supabase SQL Editor.
+This update also avoids rendering the huge native Party <select>, which caused browser lag/black dropdown overlays.
