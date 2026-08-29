@@ -1,76 +1,34 @@
-RAJ ORDER PUNCH — SUPABASE PROJECT
-=================================
+RAJ ORDER PUNCH - GOOGLE SHEETS TEMPORARY BACKEND
 
 FILES
------
-index.html                  Main order-punch website
-admin.html                  Excel -> Supabase Product/Stock/Party sync page
-config.js                   Supabase URL + Publishable Key
-ALL PRODUCT MASTER.xlsx     Updated workbook (Product Master + Party Master)
-SECURITY_UPGRADE.sql        Optional hardening notes for admin sync
+- index.html: Main Order Punch GUI
+- admin.html: Excel -> Google Sheet master sync
+- config.js: Paste Apps Script Web App URL here
+- Code.gs: Paste into Google Apps Script
+- ALL PRODUCT MASTER.xlsx: Current master file
 
-ONE REQUIRED STEP
------------------
-Open config.js and replace:
-PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE
-with your Supabase Publishable key beginning with:
-sb_publishable_
+ONE-TIME SETUP
+1. Create a blank Google Sheet named: Raj Order Punch Database
+2. In the Sheet: Extensions -> Apps Script
+3. Delete default code and paste all Code.gs content. Save.
+4. In Apps Script, select function setupDatabase and click Run once. Approve Google permissions.
+5. Deploy -> New deployment -> Select type: Web app.
+   Execute as: Me
+   Who has access: Anyone
+   Deploy. Copy the /exec Web App URL.
+6. Open config.js and paste that URL in APPS_SCRIPT_URL.
+7. Upload index.html, admin.html, config.js and ALL PRODUCT MASTER.xlsx to GitHub Pages repo root.
+8. Open /admin.html -> choose Excel -> Test Google Backend -> Fresh Sync.
+9. After SYNC COMPLETE, open index.html. Type 2+ letters in Party Master.
 
-Never put sb_secret_, service_role, or database password in this project.
+HOW STOCK WORKS
+- Fresh Sync sets Google Sheet Products.Stock to the Stock values from Excel.
+- Punch Order uses Apps Script LockService so simultaneous users are serialized.
+- Stock can go below zero; negative/zero stock is shown red.
+- Every punch writes Orders, OrderItems, and StockMovements.
+- Other PCs receive stock changes automatically every ~60 seconds, or immediately with Refresh Data.
 
-FIRST-TIME DATA SYNC
---------------------
-1. Put all files in the same GitHub repository/folder.
-2. Open admin.html from your deployed site.
-3. Choose ALL PRODUCT MASTER.xlsx.
-4. Click "Sync Excel -> Supabase".
-5. Wait until Products and Parties both show DONE.
-6. Open index.html and click Refresh Data.
-
-NORMAL DAILY USE
-----------------
-- Select Party Master party.
-- Use Group or Universal Search.
-- @group works: @kbx KX525, @luman lamp, @kbx.
-- QTY defaults to 1 and can be typed manually.
-- Cart keeps exact add order, not alphabetical order.
-- New cart item auto-scrolls into view.
-- Stock shown is Supabase live stock when available.
-- Stock 0 or negative is shown RED.
-- Negative stock ordering is allowed.
-- Punch Order & Download Excel calls punch_order() first.
-- Only after successful backend punch does it download CODE + QTY Excel.
-- Order history can be filtered by Party + Date.
-
-UPDATING MASTER / STOCK LATER
------------------------------
-1. Update Product Master / Stock / Party Master in Excel.
-2. Replace ALL PRODUCT MASTER.xlsx in GitHub with the updated file.
-3. Open admin.html and run Sync again.
-4. Product codes are upserted. New products are added.
-5. Excel Stock overwrites current Supabase stock at master-sync time.
-6. After that, each punched order deducts from Supabase live stock.
-
-IMPORTANT STOCK RULE
---------------------
-Do NOT run master stock sync casually during live ordering unless the Excel Stock
-is intentionally the new physical stock baseline. A stock sync overwrites live stock.
-
-SECURITY
---------
-Your current SQL setup grants sync_products and sync_parties to anon. That is okay
-for a private/prototype rollout, but anyone who knows the RPC can technically call it.
-Do not publicly expose admin.html long-term without Supabase Auth / admin restriction.
-SECURITY_UPGRADE.sql contains the starting hardening steps.
-
-GITHUB PAGES
-------------
-Keep index.html, admin.html, config.js, and ALL PRODUCT MASTER.xlsx in the same folder.
-For GitHub Pages, index.html opens as the website root automatically.
-
-FAST PARTY SEARCH UPDATE
-------------------------
-The main page no longer downloads all Party Master names at startup.
-Party search is server-side: type at least 2 letters and only matching parties are fetched from Supabase.
-For best search speed, run PERFORMANCE_UPGRADE.sql once in Supabase SQL Editor.
-This update also avoids rendering the huge native Party <select>, which caused browser lag/black dropdown overlays.
+IMPORTANT
+- This is a temporary/internal backend. The Apps Script Web App is publicly callable if someone knows its URL. Do not put passwords/secrets in config.js.
+- Do NOT run Fresh Sync casually during active ordering because it replaces live stock with Excel Stock. Use Fresh Sync only when you intentionally want Excel stock to become the new baseline.
+- If you edit Code.gs later, create/update a deployment so the Web App serves the latest version.

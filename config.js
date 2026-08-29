@@ -1,9 +1,7 @@
-// Raj Order Punch - Supabase configuration
-// Project URL is prefilled from your Supabase dashboard.
-// Paste ONLY the Publishable key (sb_publishable_...) below.
-// NEVER put sb_secret_, service_role, or database password in this file.
+// Raj Order Punch - Google Sheets + Apps Script configuration
+// Paste your deployed Apps Script Web App URL below.
+// Example: https://script.google.com/macros/s/AKfycb.../exec
 window.RAJ_CONFIG = {
-  SUPABASE_URL: 'https://lzctsdymrvpygibmfikg.supabase.co',
-  SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_0pVVCkxDXqiGq8Pf-JdDQw_5-Qcl698',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxLnvDaEG8D4XNkQRg_ly8_3K4pE0dxqyn5qTA10hs2sYcPq8xdXP1AewhSsPaAvNATxw/exec',
   EXCEL_FILE: 'ALL PRODUCT MASTER.xlsx'
 };
