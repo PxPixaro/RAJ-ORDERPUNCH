@@ -1,1 +1,179 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Raj Order Punch - Admin Sync</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script><script src="config.js"></script><style>body{font-family:Inter,system-ui,Arial;background:#f5f7fb;color:#172033;margin:0}.wrap{max-width:900px;margin:40px auto;padding:0 18px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;box-shadow:0 8px 28px rgba(23,32,51,.08)}h1{margin-top:0}.note{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:12px;margin:14px 0;line-height:1.45}.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}.btn{border:0;border-radius:10px;padding:11px 16px;background:#173b72;color:#fff;font-weight:800;cursor:pointer}.btn:disabled{opacity:.55}.bar{height:12px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:14px 0}.bar>div{height:100%;width:0;background:#0f766e;transition:.2s}.log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px;min-height:160px;max-height:360px;overflow:auto;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.muted{color:#6b7280;font-size:13px}</style></head><body><div class="wrap"><div class="card"><h1>Raj Order Punch — Admin Master Sync</h1><p>This page reads <b>Product Master</b> + <b>Party Master</b> from Excel and pushes them to Supabase.</p><div class="note"><b>Important:</b> Your current Supabase SQL grants sync RPC to anon. This works, but it is not secure for a public website. Use <b>SECURITY_UPGRADE.sql</b> before wide public rollout, or keep this admin page private.</div><div class="row"><input type="file" id="file" accept=".xlsx,.xls"><button class="btn" id="sync">Sync Excel → Supabase</button></div><p class="muted">Stock in Excel overwrites Supabase stock during master sync. Orders then deduct from live Supabase stock until the next stock sync.</p><div class="bar"><div id="progress"></div></div><div class="log" id="log">Waiting for Excel…</div></div></div><script>(()=>{const C=window.RAJ_CONFIG||{},logEl=document.getElementById('log'),btn=document.getElementById('sync'),file=document.getElementById('file'),bar=document.getElementById('progress');const log=m=>{logEl.textContent+=`\n${m}`;logEl.scrollTop=logEl.scrollHeight};if(!C.SUPABASE_PUBLISHABLE_KEY?.startsWith('sb_publishable_')){logEl.textContent='ERROR: Paste your sb_publishable_ key in config.js first.';btn.disabled=true;return}const db=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_PUBLISHABLE_KEY);async function rpcChunks(name,param,arr,size,label,startPct,endPct){let done=0;for(let i=0;i<arr.length;i+=size){const chunk=arr.slice(i,i+size);const{data,error}=await db.rpc(name,{[param]:chunk});if(error)throw error;done+=chunk.length;bar.style.width=(startPct+(endPct-startPct)*done/arr.length)+'%';log(`${label}: ${done.toLocaleString()} / ${arr.length.toLocaleString()}`)} }btn.onclick=async()=>{const f=file.files[0];if(!f){alert('Choose updated Excel first');return}btn.disabled=true;logEl.textContent='Reading Excel…';bar.style.width='2%';try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array',dense:true}),pws=wb.Sheets['Product Master'],partyWs=wb.Sheets['Party Master'];if(!pws||!partyWs)throw new Error('Excel must contain Product Master and Party Master sheets');const raw=XLSX.utils.sheet_to_json(pws,{defval:'',raw:false}),products=raw.map(r=>({code:String(r.Code??'').trim(),name:String(r.Name??'').trim(),grp_name:String(r.GrpName??'').trim(),unit:String(r.Unit??'').trim(),hsn_code:String(r.HSNCode??'').trim(),gst:String(r.GST??'').replace(/,/g,'').trim(),mrp:String(r.MRP??'').replace(/,/g,'').trim(),ho_rate:String(r.HO_Rate??'').replace(/,/g,'').trim(),stock:String(r.Stock??'0').replace(/,/g,'').trim()})).filter(x=>x.code),parties=XLSX.utils.sheet_to_json(partyWs,{defval:'',raw:false}).map(r=>({party_name:String(r['Party Name']??r.Party??'').trim()})).filter(x=>x.party_name);log(`Products found: ${products.length.toLocaleString()}`);log(`Parties found: ${parties.length.toLocaleString()}`);await rpcChunks('sync_products','p_products',products,300,'Products',5,82);await rpcChunks('sync_parties','p_parties',parties,500,'Parties',82,100);bar.style.width='100%';log('DONE. Supabase Product/Stock + Party Master synchronized.');}catch(e){console.error(e);log('ERROR: '+(e.message||e));alert('Sync failed: '+(e.message||e))}finally{btn.disabled=false}}})();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raj Order Punch - Admin Sync V2</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--navy:#173b72;--teal:#0f766e;--bg:#f5f7fb;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--danger:#b42318}
+*{box-sizing:border-box}body{font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--text);margin:0}.wrap{max-width:980px;margin:34px auto;padding:0 18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 8px 28px rgba(23,32,51,.08)}h1{margin:0 0 8px}.sub{margin:0 0 16px;color:#475569}.note{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:12px;margin:14px 0;line-height:1.45}.oknote{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 16px;background:var(--navy);color:#fff;font-weight:800;cursor:pointer}.btn.secondary{background:#fff;color:var(--navy);border:1px solid #cbd5e1}.btn.danger{background:#fff;color:var(--danger);border:1px solid #fecaca}.btn:disabled{opacity:.55;cursor:not-allowed}.bar{height:12px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:14px 0}.bar>div{height:100%;width:0;background:var(--teal);transition:.18s}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{border:1px solid var(--line);border-radius:10px;padding:10px}.stat b{display:block;font-size:18px}.stat span{font-size:12px;color:var(--muted)}.log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px;min-height:210px;max-height:430px;overflow:auto;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.muted{color:var(--muted);font-size:13px}.good{color:#047857}.bad{color:#b42318}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<h1>Raj Order Punch — Admin Master Sync V2</h1>
+<p class="sub">Reliable batch sync for 58k+ products and 15k+ parties.</p>
+<div class="note"><b>Important:</b> Keep this admin page private while sync RPC is granted to <code>anon</code>. Do not put any <code>sb_secret_</code> key in <code>config.js</code>.</div>
+<div class="row">
+  <input type="file" id="file" accept=".xlsx,.xls">
+  <button class="btn" id="test">Test Supabase</button>
+  <button class="btn" id="sync">Sync / Resume</button>
+  <button class="btn danger" id="reset">Reset Resume</button>
+</div>
+<p class="muted">Products sync in batches of 50, parties in batches of 100. Each failed request is retried up to 4 times. Successful progress is saved in this browser so you can resume after a network interruption.</p>
+<div class="stats">
+  <div class="stat"><b id="pstat">0</b><span>Products synced</span></div>
+  <div class="stat"><b id="ptotal">0</b><span>Total products</span></div>
+  <div class="stat"><b id="astat">0</b><span>Parties synced</span></div>
+  <div class="stat"><b id="atotal">0</b><span>Total parties</span></div>
+</div>
+<div class="bar"><div id="progress"></div></div>
+<div class="log" id="log">Ready. Choose Excel, then click Test Supabase.</div>
+</div></div>
+<script>
+(()=>{
+  const C=window.RAJ_CONFIG||{};
+  const $=id=>document.getElementById(id);
+  const logEl=$('log'), syncBtn=$('sync'), testBtn=$('test'), resetBtn=$('reset'), fileEl=$('file'), bar=$('progress');
+  const pstat=$('pstat'), ptotal=$('ptotal'), astat=$('astat'), atotal=$('atotal');
+  const PRODUCT_BATCH=50, PARTY_BATCH=100, MAX_RETRIES=4;
+  let busy=false;
+
+  const log=(m)=>{const ts=new Date().toLocaleTimeString();logEl.textContent+=`\n[${ts}] ${m}`;logEl.scrollTop=logEl.scrollHeight};
+  const setBusy=v=>{busy=v;syncBtn.disabled=v;testBtn.disabled=v;resetBtn.disabled=v;fileEl.disabled=v};
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const cleanNum=v=>String(v??'').replace(/,/g,'').trim();
+
+  function explainError(e){
+    if(!e) return 'Unknown error';
+    const bits=[];
+    if(e.name) bits.push(`name=${e.name}`);
+    if(e.message) bits.push(`message=${e.message}`);
+    if(e.code) bits.push(`code=${e.code}`);
+    if(e.status) bits.push(`status=${e.status}`);
+    if(e.statusText) bits.push(`statusText=${e.statusText}`);
+    if(e.details) bits.push(`details=${e.details}`);
+    if(e.hint) bits.push(`hint=${e.hint}`);
+    return bits.join(' | ') || String(e);
+  }
+
+  if(!C.SUPABASE_URL || !/^https:\/\/.+\.supabase\.co\/?$/.test(C.SUPABASE_URL)){
+    logEl.textContent='ERROR: SUPABASE_URL in config.js is missing or invalid.'; syncBtn.disabled=testBtn.disabled=true; return;
+  }
+  if(!C.SUPABASE_PUBLISHABLE_KEY?.startsWith('sb_publishable_')){
+    logEl.textContent='ERROR: Paste the full sb_publishable_ key in config.js. Never use sb_secret_ here.'; syncBtn.disabled=testBtn.disabled=true; return;
+  }
+
+  const db=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+
+  async function testConnection(){
+    log(`Testing ${C.SUPABASE_URL} ...`);
+    try{
+      const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),12000);
+      const url=C.SUPABASE_URL.replace(/\/$/,'')+'/rest/v1/products?select=id&limit=1';
+      const r=await fetch(url,{headers:{apikey:C.SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${C.SUPABASE_PUBLISHABLE_KEY}`},signal:ctrl.signal});
+      clearTimeout(t);
+      const text=await r.text();
+      if(!r.ok) throw Object.assign(new Error(text||r.statusText),{status:r.status,statusText:r.statusText});
+      log(`Supabase connection OK (HTTP ${r.status}).`);
+      return true;
+    }catch(e){
+      log('CONNECTION FAILED: '+explainError(e));
+      log('Check: GitHub config.js has full publishable key, project URL is exact, internet/ad-block/VPN is not blocking *.supabase.co.');
+      return false;
+    }
+  }
+
+  async function rpcWithRetry(name,param,chunk,label,batchNo,totalBatches){
+    let lastErr;
+    for(let attempt=1;attempt<=MAX_RETRIES;attempt++){
+      try{
+        const {data,error}=await db.rpc(name,{[param]:chunk});
+        if(error) throw error;
+        return data;
+      }catch(e){
+        lastErr=e;
+        log(`${label} batch ${batchNo}/${totalBatches} failed (attempt ${attempt}/${MAX_RETRIES}): ${explainError(e)}`);
+        if(attempt<MAX_RETRIES){
+          const wait=Math.min(8000,700*Math.pow(2,attempt-1));
+          log(`Retrying in ${Math.round(wait/1000)}s...`);
+          await sleep(wait);
+        }
+      }
+    }
+    throw lastErr;
+  }
+
+  function resumeKey(f){return `raj-sync-v2:${f.name}:${f.size}:${f.lastModified}`}
+  function readResume(f){try{return JSON.parse(localStorage.getItem(resumeKey(f))||'{}')}catch{return {}}}
+  function saveResume(f,s){localStorage.setItem(resumeKey(f),JSON.stringify(s))}
+
+  function updateProgress(ps,pc,as,ac){
+    pstat.textContent=ps.toLocaleString(); ptotal.textContent=pc.toLocaleString(); astat.textContent=as.toLocaleString(); atotal.textContent=ac.toLocaleString();
+    const all=pc+ac, done=ps+as; bar.style.width=(all?Math.min(100,100*done/all):0)+'%';
+  }
+
+  async function readWorkbook(f){
+    log('Reading Excel...');
+    const wb=XLSX.read(await f.arrayBuffer(),{type:'array',dense:true});
+    const pws=wb.Sheets['Product Master'], partyWs=wb.Sheets['Party Master'];
+    if(!pws||!partyWs) throw new Error('Excel must contain sheets named exactly Product Master and Party Master');
+    const raw=XLSX.utils.sheet_to_json(pws,{defval:'',raw:false});
+    const products=raw.map(r=>({
+      code:String(r.Code??'').trim(), name:String(r.Name??'').trim(), grp_name:String(r.GrpName??'').trim(), unit:String(r.Unit??'').trim(), hsn_code:String(r.HSNCode??'').trim(),
+      gst:cleanNum(r.GST), mrp:cleanNum(r.MRP), ho_rate:cleanNum(r.HO_Rate), stock:cleanNum(r.Stock||'0')||'0'
+    })).filter(x=>x.code);
+    const parties=XLSX.utils.sheet_to_json(partyWs,{defval:'',raw:false}).map(r=>({party_name:String(r['Party Name']??r.Party??'').trim()})).filter(x=>x.party_name);
+    return {products,parties};
+  }
+
+  testBtn.onclick=async()=>{if(busy)return;setBusy(true);try{await testConnection()}finally{setBusy(false)}};
+
+  resetBtn.onclick=()=>{
+    const f=fileEl.files[0];
+    if(!f){alert('Choose the same Excel file first, then Reset Resume.');return}
+    localStorage.removeItem(resumeKey(f)); updateProgress(0,0,0,0); log('Saved resume progress cleared for this Excel file.');
+  };
+
+  syncBtn.onclick=async()=>{
+    const f=fileEl.files[0]; if(!f){alert('Choose updated Excel first');return}
+    setBusy(true); logEl.textContent='Raj Order Punch Sync V2';
+    try{
+      if(!(await testConnection())) throw new Error('Supabase connection test failed. Sync was not started.');
+      const {products,parties}=await readWorkbook(f);
+      log(`Products found: ${products.length.toLocaleString()}`); log(`Parties found: ${parties.length.toLocaleString()}`);
+      const state=readResume(f); let pIndex=Math.min(Number(state.pIndex)||0,products.length), aIndex=Math.min(Number(state.aIndex)||0,parties.length);
+      if(pIndex||aIndex) log(`RESUME: products from ${pIndex.toLocaleString()}, parties from ${aIndex.toLocaleString()}.`);
+      updateProgress(pIndex,products.length,aIndex,parties.length);
+
+      const pBatches=Math.ceil(products.length/PRODUCT_BATCH);
+      while(pIndex<products.length){
+        const chunk=products.slice(pIndex,pIndex+PRODUCT_BATCH), batchNo=Math.floor(pIndex/PRODUCT_BATCH)+1;
+        await rpcWithRetry('sync_products','p_products',chunk,'Products',batchNo,pBatches);
+        pIndex+=chunk.length; saveResume(f,{pIndex,aIndex}); updateProgress(pIndex,products.length,aIndex,parties.length);
+        if(batchNo===1 || batchNo%10===0 || pIndex===products.length) log(`Products: ${pIndex.toLocaleString()} / ${products.length.toLocaleString()}`);
+        await sleep(35);
+      }
+
+      const aBatches=Math.ceil(parties.length/PARTY_BATCH);
+      while(aIndex<parties.length){
+        const chunk=parties.slice(aIndex,aIndex+PARTY_BATCH), batchNo=Math.floor(aIndex/PARTY_BATCH)+1;
+        await rpcWithRetry('sync_parties','p_parties',chunk,'Parties',batchNo,aBatches);
+        aIndex+=chunk.length; saveResume(f,{pIndex,aIndex}); updateProgress(pIndex,products.length,aIndex,parties.length);
+        if(batchNo===1 || batchNo%10===0 || aIndex===parties.length) log(`Parties: ${aIndex.toLocaleString()} / ${parties.length.toLocaleString()}`);
+        await sleep(35);
+      }
+
+      localStorage.removeItem(resumeKey(f)); bar.style.width='100%';
+      log('DONE ✅ Product Master, Stock and Party Master synchronized successfully.');
+      log('Now open index.html and search a party by typing 2+ letters.');
+    }catch(e){
+      console.error(e); log('STOPPED: '+explainError(e)); log('Your completed batch position has been saved. Fix the connection/problem and click Sync / Resume again.');
+    }finally{setBusy(false)}
+  };
+})();
+</script>
+</body></html>
