@@ -1,34 +1,37 @@
-RAJ ORDER PUNCH - GOOGLE SHEETS TEMPORARY BACKEND
+RAJ ORDER PUNCH — TEMPORARY EXCEL MODE (UNIVERSAL PARTY SEARCH)
 
-FILES
-- index.html: Main Order Punch GUI
-- admin.html: Excel -> Google Sheet master sync
-- config.js: Paste Apps Script Web App URL here
-- Code.gs: Paste into Google Apps Script
-- ALL PRODUCT MASTER.xlsx: Current master file
+FILES TO UPLOAD TO GITHUB REPO ROOT:
+- index.html
+- config.js
+- ALL PRODUCT MASTER.xlsx
+- party-master.json
 
-ONE-TIME SETUP
-1. Create a blank Google Sheet named: Raj Order Punch Database
-2. In the Sheet: Extensions -> Apps Script
-3. Delete default code and paste all Code.gs content. Save.
-4. In Apps Script, select function setupDatabase and click Run once. Approve Google permissions.
-5. Deploy -> New deployment -> Select type: Web app.
-   Execute as: Me
-   Who has access: Anyone
-   Deploy. Copy the /exec Web App URL.
-6. Open config.js and paste that URL in APPS_SCRIPT_URL.
-7. Upload index.html, admin.html, config.js and ALL PRODUCT MASTER.xlsx to GitHub Pages repo root.
-8. Open /admin.html -> choose Excel -> Test Google Backend -> Fresh Sync.
-9. After SYNC COMPLETE, open index.html. Type 2+ letters in Party Master.
+OPTIONAL / FOR LATER SUPABASE RESTORE:
+- admin.html
+- SECURITY_UPGRADE.sql
+- PERFORMANCE_UPGRADE.sql
 
-HOW STOCK WORKS
-- Fresh Sync sets Google Sheet Products.Stock to the Stock values from Excel.
-- Punch Order uses Apps Script LockService so simultaneous users are serialized.
-- Stock can go below zero; negative/zero stock is shown red.
-- Every punch writes Orders, OrderItems, and StockMovements.
-- Other PCs receive stock changes automatically every ~60 seconds, or immediately with Refresh Data.
+CURRENT TEMPORARY BEHAVIOR:
+1. Product Master loads from ALL PRODUCT MASTER.xlsx.
+2. Party Master loads from lightweight party-master.json (15k+ parties) for faster search.
+3. There is NO alphabet A/B/C/D filter.
+4. Party search is universal across the full party text. Examples: Rajkot, DM, Agency, Shrinath.
+5. All parties are loaded into browser memory, but only up to 250 matching rows are rendered at once to keep the UI fast.
+6. If party-master.json is missing, index.html automatically falls back to the Excel Party Master sheet.
+7. Punch & Download exports only CODE and QTY and automatically clears the cart after successful download.
+8. Temporary stock comes from Excel. Supabase live stock/history can be restored later.
 
-IMPORTANT
-- This is a temporary/internal backend. The Apps Script Web App is publicly callable if someone knows its URL. Do not put passwords/secrets in config.js.
-- Do NOT run Fresh Sync casually during active ordering because it replaces live stock with Excel Stock. Use Fresh Sync only when you intentionally want Excel stock to become the new baseline.
-- If you edit Code.gs later, create/update a deployment so the Web App serves the latest version.
+WHEN SUPABASE IS FIXED:
+Edit config.js and paste:
+- SUPABASE_URL = your project URL
+- SUPABASE_PUBLISHABLE_KEY = your sb_publishable_... key
+Never use a secret/service_role key in GitHub Pages.
+
+WHEN PARTY MASTER CHANGES:
+The included party-master.json corresponds to the included Excel file. If Party Master changes later, regenerate/update party-master.json or temporarily remove it so the app falls back to the Party Master sheet in Excel.
+
+FIXED BUILD:
+- Party universal search runtime bug fixed (partySearchSeq/partySearchTimer declared).
+- Search checks the complete party-master.json list, not just rendered dropdown rows.
+- Multi-word/compact matching improved: e.g. "DM agency" can match "D M Auto Agency Rajkot".
+- Dropdown renders only the first 250 matches for speed; the search itself scans all parties.

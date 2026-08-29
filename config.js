@@ -1,7 +1,10 @@
-// Raj Order Punch - Google Sheets + Apps Script configuration
-// Paste your deployed Apps Script Web App URL below.
-// Example: https://script.google.com/macros/s/AKfycb.../exec
+// Raj Order Punch configuration
+// TEMPORARY MODE works from Excel + party-master.json even when Supabase is unavailable.
+// Later, paste your Supabase Project URL and ONLY the Publishable key below.
+// NEVER put sb_secret_, service_role, database password, or any private key in this public file.
 window.RAJ_CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxLnvDaEG8D4XNkQRg_ly8_3K4pE0dxqyn5qTA10hs2sYcPq8xdXP1AewhSsPaAvNATxw/exec',
-  EXCEL_FILE: 'ALL PRODUCT MASTER.xlsx'
+  SUPABASE_URL: 'PASTE_YOUR_SUPABASE_PROJECT_URL_HERE',
+  SUPABASE_PUBLISHABLE_KEY: 'PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE',
+  EXCEL_FILE: 'ALL PRODUCT MASTER.xlsx',
+  PARTY_JSON_FILE: 'party-master.json'
 };
